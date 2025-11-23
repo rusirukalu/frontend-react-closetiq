@@ -13,6 +13,30 @@ const firebaseConfig = {
   measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
+// Validate config
+const requiredKeys = [
+  'apiKey',
+  'authDomain',
+  'projectId',
+  'storageBucket',
+  'messagingSenderId',
+  'appId'
+] as const;
+
+const missingKeys = requiredKeys.filter(key => !firebaseConfig[key]);
+
+if (missingKeys.length > 0) {
+  console.error(
+    `🔥 Firebase Configuration Error: Missing required keys: ${missingKeys.join(', ')}.\n` +
+    `Check your .env file or Vercel environment variables.`
+  );
+} else {
+  console.log('✅ Firebase Config Loaded', {
+    projectId: firebaseConfig.projectId,
+    authDomain: firebaseConfig.authDomain
+  });
+}
+
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
