@@ -1,21 +1,26 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Sparkles, LogOut } from "lucide-react";
+import { Sparkles, Menu, X, LogOut } from "lucide-react";
 import { auth } from "../../config/firebase";
 import { signOut, onAuthStateChanged, User } from "firebase/auth";
+import GlassButton from "../ui/GlassButton";
 
 const Navbar: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
-      setLoading(false);
     });
-
-    return () => unsubscribe();
+    const handleScroll = () => setScrolled(window.scrollY > 50);
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      unsubscribe();
+      window.removeEventListener("scroll", handleScroll);
+    };
   }, []);
 
   const handleLogout = async () => {
@@ -27,77 +32,96 @@ const Navbar: React.FC = () => {
     }
   };
 
-  if (loading) {
-    return (
-      <nav className="fixed top-0 left-0 w-full bg-white/95 backdrop-blur-sm shadow-md z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center">
-              <Link
-                to="/"
-                className="flex items-center space-x-2 text-xl font-bold text-primary-600"
-              >
-                <Sparkles className="w-6 h-6" />
-                <span>ClosetIQ</span>
-              </Link>
-            </div>
-            <div className="flex items-center space-x-4">
-              <div className="w-20 h-8 bg-gray-200 animate-pulse rounded"></div>
-            </div>
-          </div>
-        </div>
-      </nav>
-    );
-  }
-
   return (
-    <nav className="fixed top-0 left-0 w-full bg-white/95 backdrop-blur-sm shadow-md z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
-          <div className="flex items-center">
-            <Link
-              to="/"
-              className="flex items-center space-x-2 text-xl font-bold text-primary-600"
-            >
-              <Sparkles className="w-6 h-6" />
-              <span>ClosetIQ</span>
-            </Link>
+    <nav
+      className={`fixed top-8 left-0 w-full z-50 transition-all duration-300 ${
+        scrolled
+          ? "bg-black/50 backdrop-blur-xl border-b border-white/5 py-4"
+          : "bg-transparent py-6"
+      }`}
+    >
+      <div className="flex items-center justify-between px-4 mx-auto max-w-7xl">
+        <Link to="/" className="flex items-center gap-2 group">
+          <div className="p-2 transition-colors border bg-white/10 rounded-xl border-white/10 group-hover:bg-white/20">
+            <Sparkles className="w-5 h-5 text-white" />
           </div>
-          <div className="flex items-center space-x-4">
-            {user ? (
-              // Authenticated user - show logout button
-              <div className="flex items-center space-x-4">
-                <span className="text-gray-700 font-medium">
-                  Welcome, {user.displayName || user.email}
-                </span>
-                <button
-                  onClick={handleLogout}
-                  className="flex items-center space-x-2 text-gray-700 hover:text-red-600 font-medium transition-colors px-4 py-2 rounded-lg hover:bg-red-50"
-                >
-                  <LogOut className="w-4 h-4" />
-                  <span>Logout</span>
-                </button>
-              </div>
-            ) : (
-              // Non-authenticated user - show login/register buttons
-              <>
-                <Link
-                  to="/login"
-                  className="text-gray-700 hover:text-primary-600 font-medium transition-colors px-4 py-2 rounded-lg hover:bg-primary-50"
-                >
-                  Login
-                </Link>
-                <Link
-                  to="/register"
-                  className="bg-primary-600 text-white font-medium px-6 py-2 rounded-lg hover:bg-primary-700 transition-colors shadow-md"
-                >
-                  Get Started
-                </Link>
-              </>
-            )}
-          </div>
+          <span className="text-xl font-black tracking-widest text-white uppercase">
+            ClosetIQ
+          </span>
+        </Link>
+
+        {/* Desktop Menu */}
+        <div className="items-center hidden gap-8 md:flex">
+          {user ? (
+            <>
+              <span className="text-sm font-medium text-gray-300">
+                {user.displayName || user.email?.split("@")[0]}
+              </span>
+              <button
+                onClick={handleLogout}
+                className="flex items-center gap-2 text-sm font-bold text-white transition-colors hover:text-gray-300"
+              >
+                LOGOUT
+              </button>
+            </>
+          ) : (
+            <>
+              <Link
+                to="/login"
+                className="text-sm font-bold tracking-wider text-gray-300 uppercase transition-colors hover:text-white"
+              >
+                Login
+              </Link>
+              <GlassButton
+                to="/register"
+                variant="primary"
+                className="!py-2 !px-6 !text-xs"
+              >
+                Get Started
+              </GlassButton>
+            </>
+          )}
         </div>
+
+        {/* Mobile Menu Toggle */}
+        <button
+          className="text-white md:hidden"
+          onClick={() => setIsOpen(!isOpen)}
+        >
+          {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+        </button>
       </div>
+
+      {/* Mobile Menu */}
+      {isOpen && (
+        <div className="absolute left-0 flex flex-col w-full gap-4 p-4 border-b md:hidden top-full bg-black/90 backdrop-blur-2xl border-white/10">
+          {user ? (
+            <>
+              <div className="p-2 text-sm text-gray-400">
+                {user.displayName || user.email}
+              </div>
+              <button
+                onClick={handleLogout}
+                className="p-2 font-bold text-left text-white"
+              >
+                LOGOUT
+              </button>
+            </>
+          ) : (
+            <>
+              <Link to="/login" className="p-2 font-bold text-white">
+                LOGIN
+              </Link>
+              <Link
+                to="/register"
+                className="p-2 font-bold text-center text-black bg-white rounded-lg"
+              >
+                GET STARTED
+              </Link>
+            </>
+          )}
+        </div>
+      )}
     </nav>
   );
 };

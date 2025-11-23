@@ -62,9 +62,9 @@ class ErrorBoundary extends React.Component<
   render() {
     if (this.state.hasError) {
       return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50">
-          <div className="text-center p-8 bg-white rounded-lg shadow-lg max-w-md">
-            <div className="text-red-600 mb-4">
+        <div className="flex items-center justify-center min-h-screen bg-gray-50">
+          <div className="max-w-md p-8 text-center bg-white rounded-lg shadow-lg">
+            <div className="mb-4 text-red-600">
               <svg
                 className="w-16 h-16 mx-auto"
                 fill="none"
@@ -79,16 +79,16 @@ class ErrorBoundary extends React.Component<
                 />
               </svg>
             </div>
-            <h2 className="text-xl font-semibold text-gray-900 mb-2">
+            <h2 className="mb-2 text-xl font-semibold text-gray-900">
               Something went wrong
             </h2>
-            <p className="text-gray-600 mb-4">
+            <p className="mb-4 text-gray-600">
               An unexpected error occurred. Please refresh the page to try
               again.
             </p>
             <button
               onClick={() => window.location.reload()}
-              className="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors"
+              className="px-4 py-2 text-white transition-colors rounded-lg bg-primary-600 hover:bg-primary-700"
             >
               Reload Page
             </button>
@@ -104,11 +104,11 @@ class ErrorBoundary extends React.Component<
 // Backend Connection Warning Component
 const BackendConnectionWarning: React.FC = () => {
   return (
-    <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-4">
+    <div className="p-4 mb-4 border-l-4 border-yellow-400 bg-yellow-50">
       <div className="flex">
         <div className="flex-shrink-0">
           <svg
-            className="h-5 w-5 text-yellow-400"
+            className="w-5 h-5 text-yellow-400"
             viewBox="0 0 20 20"
             fill="currentColor"
           >
@@ -150,7 +150,7 @@ const AppContent: React.FC = () => {
   // Show loading screen while determining auth state
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="flex items-center justify-center min-h-screen bg-gray-50">
         <div className="text-center">
           <LoadingSpinner size="lg" />
           <div className="mt-4 text-gray-600">Loading application...</div>
