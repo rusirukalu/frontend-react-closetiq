@@ -3,20 +3,18 @@ import { Outlet } from "react-router-dom"; // Add this import
 import Navigation from "./Navigation";
 import { Toaster } from "react-hot-toast";
 
-interface DashboardLayoutProps {
-  children?: React.ReactNode; // Make optional
-}
+interface DashboardLayoutProps {}
 
-const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
+const DashboardLayout: React.FC<DashboardLayoutProps> = () => {
   return (
-    <div className="h-screen flex overflow-hidden bg-gray-50">
+    <div className="flex h-screen overflow-hidden bg-gray-50">
       <Navigation />
 
       {/* Main content */}
-      <div className="flex flex-col w-0 flex-1 overflow-hidden lg:ml-64">
-        <main className="flex-1 relative overflow-y-auto focus:outline-none">
+      <div className="flex flex-col flex-1 w-0 overflow-hidden lg:ml-64">
+        <main className="relative flex-1 overflow-y-auto focus:outline-none">
           <div className="py-6">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
+            <div className="px-4 mx-auto max-w-7xl sm:px-6 md:px-8">
               {/* CRITICAL FIX: Use Outlet instead of children */}
               <Outlet />
             </div>

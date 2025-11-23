@@ -270,7 +270,7 @@ const ClassifyPage: React.FC = () => {
       if (shouldAutoAdd) {
         // ✅ Use classifyAndAddItem for automatic addition
         setIsAddingToWardrobe(true);
-        const result = await dispatch(
+        await dispatch(
           classifyAndAddItem({
             file: selectedImage,
             wardrobeId: currentWardrobe._id,
@@ -470,7 +470,7 @@ const ClassifyPage: React.FC = () => {
           <Brain className="h-4 w-4" /> AI‑Detected Attributes
         </h4>
         <div className="grid gap-3">
-          {attrEntries.map(([k, list]) => (
+          {attrEntries.map(([k, list]: [string, any]) => (
             <div
               key={k}
               className="p-3 bg-gray-100 dark:bg-gray-600 rounded-lg border border-gray-200 dark:border-gray-600"
@@ -554,7 +554,7 @@ const ClassifyPage: React.FC = () => {
         )}
         {q.recommendations?.length && (
           <ul className="mt-2 space-y-1 text-sm text-gray-600 dark:text-gray-400 list-disc list-inside">
-            {q.recommendations.map((r, i) => (
+            {q.recommendations.map((r: string, i: number) => (
               <li key={i}>{r}</li>
             ))}
           </ul>

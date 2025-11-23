@@ -13,7 +13,7 @@ import {
   LineElement,
 } from "chart.js";
 import { Bar, Doughnut, Line } from "react-chartjs-2";
-import { TrendingUp, Shirt, Heart, Calendar, Target, Zap } from "lucide-react";
+import { TrendingUp, Shirt, Heart, Target, Zap } from "lucide-react";
 
 ChartJS.register(
   CategoryScale,

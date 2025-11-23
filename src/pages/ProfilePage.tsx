@@ -14,7 +14,6 @@ import {
   MapPin,
   Calendar,
   Palette,
-  Heart,
 } from "lucide-react";
 
 const ProfilePage: React.FC = () => {
@@ -95,7 +94,7 @@ const ProfilePage: React.FC = () => {
                     Personal Information
                   </CardTitle>
                   <Button
-                    variant={isEditing ? "default" : "outline"}
+                    variant={isEditing ? "primary" : "outline"}
                     size="sm"
                     onClick={isEditing ? handleSave : () => setIsEditing(true)}
                   >

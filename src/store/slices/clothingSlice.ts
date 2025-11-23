@@ -108,8 +108,8 @@ export const classifyAndAddItem = createAsyncThunk(
       
       // Extract classification data with fallbacks
       const classification = classificationResult.classification || classificationResult;
-      const attributes = classificationResult.attributes || {};
-      const image_quality = classificationResult.image_quality || {};
+      const attributes = (classificationResult.attributes || {}) as any;
+
       
       // Prepare item data based on AI classification
       const itemData = {
@@ -188,16 +188,24 @@ export const findSimilarClothingItems = createAsyncThunk(
 
 export const createClothingItem = createAsyncThunk(
   'clothing/createClothingItem',
-  async (itemData: Partial<ClothingItem>, { rejectWithValue }) => {
+  async (itemData: Partial<ClothingItem> | FormData, { rejectWithValue }) => {
     try {
       const token = localStorage.getItem('authToken');
+      const isFormData = itemData instanceof FormData;
+      
+      const headers: HeadersInit = {
+        'Authorization': `Bearer ${token}`,
+      };
+
+      // Only set Content-Type for JSON, let browser set it for FormData
+      if (!isFormData) {
+        headers['Content-Type'] = 'application/json';
+      }
+
       const response = await fetch('/api/clothing', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify(itemData),
+        headers,
+        body: isFormData ? itemData : JSON.stringify(itemData),
       });
 
       if (!response.ok) {

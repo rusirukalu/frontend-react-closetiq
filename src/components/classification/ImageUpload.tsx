@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { Upload, X, Camera, FileImage } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import Button from "@/components/ui/button";
 
 interface ImageUploadProps {

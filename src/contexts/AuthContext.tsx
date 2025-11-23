@@ -145,7 +145,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
       const token = await firebaseUser.getIdToken(false); // Don't force refresh
       localStorage.setItem("authToken", token);
 
-      const result = await dispatch(fetchUserProfile()).unwrap();
+      await dispatch(fetchUserProfile()).unwrap();
       console.log("Backend profile found, user fully authenticated");
     } catch (error: any) {
       console.log("Backend profile not found, using Firebase data only");

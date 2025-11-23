@@ -19,7 +19,7 @@ import ProfilePage from "@/pages/ProfilePage";
 import SettingsPage from "@/pages/SettingsPage";
 
 const ProtectedRoutes: React.FC = () => {
-  const { isAuthenticated, isLoading, backendConnected } = useAuth();
+  const { isAuthenticated, isLoading } = useAuth();
 
   // Redirect to login if not authenticated
   if (!isAuthenticated) {

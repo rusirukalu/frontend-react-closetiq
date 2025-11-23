@@ -6,7 +6,6 @@ import Input from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import {
-  Settings,
   Bell,
   Shield,
   Palette,
@@ -394,7 +393,7 @@ const SettingsPage: React.FC = () => {
                     Permanently delete your account and all data
                   </p>
                 </div>
-                <Button variant="destructive" onClick={handleDeleteAccount}>
+                <Button variant="danger" onClick={handleDeleteAccount}>
                   <Trash2 className="mr-2 h-4 w-4" />
                   Delete
                 </Button>

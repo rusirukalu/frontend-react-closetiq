@@ -193,6 +193,22 @@ class AIService {
       throw new Error(error.message || 'Failed to generate recommendations');
     }
   }
+  async findSimilarItems(itemId: string, limit: number = 5) {
+    try {
+      console.log('🔍 AIService: Finding similar items for', itemId);
+      
+      const apiResponse = await apiClient.get(`/api/clothing/${itemId}/similar?limit=${limit}`);
+      
+      if (!apiResponse.success) {
+        throw new Error(apiResponse.error || 'Failed to find similar items');
+      }
+
+      return apiResponse.data;
+    } catch (error: any) {
+      console.error('❌ AIService: Find similar error:', error);
+      throw new Error(error.message || 'Failed to find similar items');
+    }
+  }
 }
 
 export default new AIService();

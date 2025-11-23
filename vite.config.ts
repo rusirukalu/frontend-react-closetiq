@@ -40,8 +40,7 @@ export default defineConfig({
           vendor: ['react', 'react-dom'],
           router: ['react-router-dom'],
           ui: ['@headlessui/react', '@heroicons/react'],
-          charts: ['chart.js', 'react-chartjs-2'],
-          firebase: ['firebase']
+          charts: ['chart.js', 'react-chartjs-2']
         }
       }
     }

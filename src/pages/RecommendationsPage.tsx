@@ -33,10 +33,17 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
 // ✅ Real Weather Service
+interface WeatherData {
+  temperature: number;
+  condition: string;
+  location: string;
+  weathercode: number;
+}
+
 const useWeatherData = () => {
-  const [weatherData, setWeatherData] = useState(null);
+  const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchWeatherData = async () => {
@@ -62,7 +69,7 @@ const useWeatherData = () => {
         const currentWeather = weatherApiData.current_weather;
 
         // Weather code mapping
-        const conditionMap = {
+        const conditionMap: Record<number, string> = {
           0: "clear",
           1: "mainly_clear",
           2: "partly_cloudy",
@@ -75,9 +82,11 @@ const useWeatherData = () => {
           61: "rain",
           63: "rain",
           65: "heavy_rain",
-          71: "snow",
-          73: "snow",
-          75: "heavy_snow",
+          71: "drizzle",
+          72: "drizzle",
+          73: "drizzle",
+          74: "drizzle",
+          75: "heavy_rain",
           80: "rain_showers",
           81: "rain_showers",
           82: "heavy_rain_showers",
@@ -94,7 +103,7 @@ const useWeatherData = () => {
           location: `${ipData.city}, ${ipData.region}, ${ipData.country}`,
           weathercode: currentWeather.weathercode,
         });
-      } catch (err) {
+      } catch (err: any) {
         console.error("Weather fetch error:", err);
         setError(err.message);
       } finally {
@@ -190,7 +199,7 @@ const RecommendationsPage: React.FC = () => {
 
   // ✅ Smart wardrobe analysis
   const wardrobeAnalysis = useMemo(() => {
-    const categoryMapping = {
+    const categoryMapping: Record<string, string> = {
       shirts_blouses: "tops",
       tshirts_tops: "tops",
       sweaters: "tops",
@@ -204,8 +213,8 @@ const RecommendationsPage: React.FC = () => {
       bags_accessories: "accessories",
     };
 
-    const categoryCounts = {};
-    const availableCategories = new Set();
+    const categoryCounts: Record<string, number> = {};
+    const availableCategories = new Set<string>();
 
     clothingItems.forEach((item) => {
       const category = item.category;
@@ -230,7 +239,7 @@ const RecommendationsPage: React.FC = () => {
       return !availableCategories.has(req);
     });
 
-    const categoryLabels = {
+    const categoryLabels: Record<string, string> = {
       tops: "Tops (shirts, t-shirts, blouses)",
       bottoms: "Bottoms (pants, jeans, skirts)",
       shoes: "Shoes (sneakers, formal)",
@@ -277,7 +286,7 @@ const RecommendationsPage: React.FC = () => {
 
     try {
       const wardrobeItemIds = clothingItems
-        .map((item) => item._id || item.id)
+        .map((item) => item.id)
         .filter((id, index, array) => array.indexOf(id) === index)
         .filter((id) => id && typeof id === "string");
 
@@ -302,15 +311,10 @@ const RecommendationsPage: React.FC = () => {
       // ✅ Enhanced response handling
       console.log("🎯 Generation result:", result);
 
-      if (
-        result.recommendations?.outfits &&
-        result.recommendations.outfits.length > 0
-      ) {
+      if (result.outfits && result.outfits.length > 0) {
         toast.success(
-          `Generated ${result.recommendations.outfits.length} AI outfit recommendations!`
+          `Generated ${result.outfits.length} AI outfit recommendations!`
         );
-      } else if (result.algorithm_info?.error) {
-        toast.error(result.algorithm_info.error);
       } else {
         toast.error(
           "AI couldn't generate outfits with your current items. Try adding more variety!"
@@ -543,7 +547,7 @@ const RecommendationsPage: React.FC = () => {
                   <Button
                     key={occasion.id}
                     variant={
-                      selectedOccasion === occasion.id ? "default" : "outline"
+                      selectedOccasion === occasion.id ? "secondary" : "outline"
                     }
                     className={`h-auto p-4 flex flex-col gap-2 transition-all duration-200 ${
                       selectedOccasion === occasion.id
@@ -574,7 +578,7 @@ const RecommendationsPage: React.FC = () => {
                   <Button
                     key={season.id}
                     variant={
-                      selectedSeason === season.id ? "default" : "outline"
+                      selectedSeason === season.id ? "secondary" : "outline"
                     }
                     className={`flex items-center gap-2 transition-all duration-200 ${
                       selectedSeason === season.id
@@ -806,35 +810,33 @@ const RecommendationsPage: React.FC = () => {
 
                       {/* Outfit Items */}
                       <div className="grid grid-cols-2 gap-3">
-                        {outfit.items
-                          ?.slice(0, 4)
-                          .map((itemId: string, index: number) => {
-                            const item = clothingItems.find(
-                              (ci) => ci._id === itemId || ci.id === itemId
-                            );
-                            return (
-                              <div
-                                key={index}
-                                className="flex items-center gap-3 p-3 border rounded-lg bg-gradient-to-br from-white to-gray-50 hover:shadow-md transition-shadow"
-                              >
-                                <div className="w-12 h-12 bg-gradient-to-br from-purple-100 to-blue-100 rounded-lg flex items-center justify-center">
-                                  <span className="text-xs font-bold text-purple-700">
-                                    {item?.category?.charAt(0).toUpperCase() ||
-                                      "I"}
-                                  </span>
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                  <p className="text-sm font-medium truncate">
-                                    {item?.name || `Item ${index + 1}`}
-                                  </p>
-                                  <p className="text-xs text-gray-500 capitalize">
-                                    {item?.category?.replace("_", " ") ||
-                                      "Fashion item"}
-                                  </p>
-                                </div>
+                        {outfit.items?.slice(0, 4).map((itemId: string) => {
+                          const item = clothingItems.find(
+                            (ci) => ci.id === itemId
+                          );
+                          return (
+                            <div
+                              key={index}
+                              className="flex items-center gap-3 p-3 border rounded-lg bg-gradient-to-br from-white to-gray-50 hover:shadow-md transition-shadow"
+                            >
+                              <div className="w-12 h-12 bg-gradient-to-br from-purple-100 to-blue-100 rounded-lg flex items-center justify-center">
+                                <span className="text-xs font-bold text-purple-700">
+                                  {item?.category?.charAt(0).toUpperCase() ||
+                                    "I"}
+                                </span>
                               </div>
-                            );
-                          })}
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm font-medium truncate">
+                                  {item?.name || `Item ${index + 1}`}
+                                </p>
+                                <p className="text-xs text-gray-500 capitalize">
+                                  {item?.category?.replace("_", " ") ||
+                                    "Fashion item"}
+                                </p>
+                              </div>
+                            </div>
+                          );
+                        })}
                       </div>
 
                       {/* ✅ Only show Style Tags if they exist */}

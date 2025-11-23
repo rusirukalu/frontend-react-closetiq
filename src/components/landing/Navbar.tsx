@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Sparkles, Menu, X, LogOut } from "lucide-react";
+import { Sparkles, Menu, X } from "lucide-react";
 import { auth } from "../../config/firebase";
 import { signOut, onAuthStateChanged, User } from "firebase/auth";
 import GlassButton from "../ui/GlassButton";

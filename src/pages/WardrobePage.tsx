@@ -43,59 +43,6 @@ import {
   clearError,
 } from "@/store/slices/clothingSlice";
 
-// ✅ UPDATED: Clothing item type to match backend structure
-interface ClothingItem {
-  _id: string;
-  userId: string;
-  wardrobeId: string;
-  name: string;
-  category: string;
-  brand?: string;
-  color: string;
-  size?: string;
-  price?: number;
-  purchaseDate?: string;
-  imageUrl?: string;
-
-  attributes?: {
-    colors?: string[];
-    patterns?: string[];
-    materials?: string[];
-  };
-
-  userMetadata?: {
-    userTags?: string[];
-    isFavorite?: boolean;
-    timesWorn?: number;
-    notes?: string;
-    size?: string;
-    price?: number;
-    purchaseDate?: string | null;
-  };
-
-  aiClassification?: {
-    confidence: number;
-    modelVersion: string;
-    allPredictions: Array<{
-      category: string;
-      confidence: number;
-    }>;
-    processingTime: number;
-    qualityScore: number;
-  };
-
-  tags: string[];
-  notes?: string;
-  isFavorite: boolean;
-  timesWorn: number;
-  lastWorn?: string;
-  createdAt: string;
-  updatedAt: string;
-  confidence?: number;
-  aiClassified?: boolean;
-  id?: string;
-}
-
 const WardrobePage: React.FC = () => {
   const dispatch = useAppDispatch();
   const {
@@ -427,7 +374,7 @@ const WardrobePage: React.FC = () => {
               {brand} • {color}
             </p>
             <div className="flex flex-wrap gap-2">
-              {tags.slice(0, 3).map((tag, index) => (
+              {tags.slice(0, 3).map((tag: string, index: number) => (
                 <Badge
                   key={`${tag}-${index}`}
                   variant="secondary"
@@ -856,7 +803,7 @@ const WardrobePage: React.FC = () => {
 
               <div className="flex border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800">
                 <Button
-                  variant={viewMode === "grid" ? "default" : "ghost"}
+                  variant={viewMode === "grid" ? "secondary" : "ghost"}
                   size="sm"
                   onClick={() => setViewMode("grid")}
                   className="rounded-r-none border-r border-gray-300 dark:border-gray-600"
@@ -864,7 +811,7 @@ const WardrobePage: React.FC = () => {
                   <Grid className="h-4 w-4" />
                 </Button>
                 <Button
-                  variant={viewMode === "list" ? "default" : "ghost"}
+                  variant={viewMode === "list" ? "secondary" : "ghost"}
                   size="sm"
                   onClick={() => setViewMode("list")}
                   className="rounded-l-none"

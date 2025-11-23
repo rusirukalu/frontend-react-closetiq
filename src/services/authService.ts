@@ -358,7 +358,7 @@ class AuthService {
       }
 
       // Verify with backend
-      const token = await user.getIdToken(true);
+      await user.getIdToken(true);
       const response = await apiClient.get('/api/auth/validate');
       
       return response.success;

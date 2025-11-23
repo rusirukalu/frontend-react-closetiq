@@ -237,10 +237,6 @@ class ApiClient {
   }
 
   // Helper method for delays
-  private sleep(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
-
   // Enhanced deduplication for all methods
   private async dedupeRequest<T>(key: string, requestFn: () => Promise<T>): Promise<T> {
     if (this.requestQueue.has(key)) {
@@ -294,35 +290,13 @@ class ApiClient {
     );
   }
 
-  // POST method with smart deduplication for identical data
+  // POST method
   async post<T = any>(
     url: string,
     data?: any,
     config?: AxiosRequestConfig
   ): Promise<ApiResponse<T>> {
-    // Only deduplicate POST requests with identical data for specific endpoints
-    const shouldDedupe = this.shouldDeduplicatePost(url, data);
-    
-    if (shouldDedupe) {
-      const key = `POST:${url}:${JSON.stringify(data)}:${JSON.stringify(config || {})}`;
-      return this.dedupeRequest(key, () => 
-        this.queueRequest<T>({ ...config, method: 'POST', url, data })
-      );
-    }
-
     return this.queueRequest<T>({ ...config, method: 'POST', url, data });
-  }
-
-  // Helper to determine if POST should be deduplicated
-  private shouldDeduplicatePost(url: string, data: any): boolean {
-    // Deduplicate specific endpoints that are safe to deduplicate
-    const dedupeEndpoints = [
-      '/api/auth/register',
-      '/api/auth/me',
-      '/api/users/profile'
-    ];
-    
-    return dedupeEndpoints.some(endpoint => url.includes(endpoint));
   }
 
   // PUT method
